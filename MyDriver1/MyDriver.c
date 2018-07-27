@@ -124,7 +124,8 @@ IRP会依次从最高层传递到最底层。StackSize描述的就是这个
 
 NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath);
 NTSTATUS CreateDevice(IN PDRIVER_OBJECT pDriverObject);
-VOID DriverUnload(PDRIVER_OBJECT objDriver);
+VOID DriverUnload(IN PDRIVER_OBJECT objDriver);
+VOID DisplayItsProcessName();
 
 /*++
 
@@ -191,6 +192,8 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegist
 
 	// 注册其他驱动调用函数入口
 	pDriverObject->DriverUnload = DriverUnload;
+
+	DisplayItsProcessName();
 
 	// 创建驱动设备对象
 	// status = CreateDevice(pDriverObject);
@@ -475,5 +478,48 @@ NTSTATUS IoDeleteSymbolicLink(
 	表示已经被注册了的符号链接。
 2.  返回值：
 	表示删除符号链接是否成功。
+
+--*/
+
+/*++
+
+Windows驱动程序和进程的关系
+
+	驱动程序可以看成是一个特殊的DLL文件被应用程序加载到虚拟
+内存中，只不过加载地址是内核模式地址，而不是用户模式地址。它
+能访问的只是这个进程的虚拟内存，而不是其他进程的虚拟地址。需
+要指出的是，Windows驱动程序里的不同例程运行在不同的进程中。
+DriverEntry例程和AddDevice例程是运行在系统（System）进程
+中。这个进程是Windows中非常的进程，也是Windows第一个运行的
+进程。当需要加载的时候，这个进程中会有一个线程将驱动加载到内
+核模式地址空间内，并调用DriverEntry例程。
+	而其他的一些例程，例如，IRP_MJ_READ和IRP_MJ_WRITE的派
+遣函数会运行于应用程序的“上下文”中。所谓运行在进程的“上下文”
+中，指的是运行于某个进程的环境中，所能访问的虚拟地址是这个进
+程的虚拟地址。
+	在代码中打印一行log信息，这行信息打印出当前进程的进程名。
+如果当前进程是发起I/O请求的进程，则说明在进程的“上下文”中。
+下面函数可以显示当前进程的进程名。
+
+--*/
+
+VOID DisplayItsProcessName()
+{
+	// 得到当前进程，PsGetCurrentProcess函数是得到当前运行的进程
+	PEPROCESS pEProcess = PsGetCurrentProcess();
+	// 得到当前进程名称
+	PTSTR ProcessName = (PTSTR)((ULONG)pEProcess + 0x174);
+	KdPrint(("%s\n", ProcessName));
+}
+
+/*++
+
+分页与非分页内存
+
+	Windows规定有些虚拟内存页面是可以交换到文件中，这类内存
+被称为分页内存。而有些虚拟内存页永远不会交换到文件中，这些内
+存被称为非分页内存。
+	当程序的中断请求级在DISPATCH_LEVEL之上时（包括DISPATCH_LEVEL
+层），程序只能使用非分页内存，否则将导致蓝屏死机。
 
 --*/
