@@ -60,3 +60,5 @@ dkms.conf
 *.vcxproj
 *.filters
 *.user
+*.suo
+*.log
