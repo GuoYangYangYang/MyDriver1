@@ -54,11 +54,6 @@ dkms.conf
 /Debug/
 /MyDriver1/Debug/
 *.VC
-*.db
-*.sln
-*.inf
-*.vcxproj
-*.filters
 *.user
 *.suo
 *.log
