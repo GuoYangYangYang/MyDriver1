@@ -1,5 +1,6 @@
 #include <ntifs.h> 
 
+// 2018-9-3 11:24
 // 在编译DDK提供的例程时，可以指定某个例程和某个全局变量是
 // 载入分页内存还是非分页内存，需要做如下定义：
 #define PAGEDCODE code_seg("PAGE")
