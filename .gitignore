@@ -56,7 +56,6 @@ dkms.conf
 /MyDriver1/MyDriver/Debug/
 *.opendb
 *.db
-*.vcxproj
 *.VC
 *.user
 *.suo
