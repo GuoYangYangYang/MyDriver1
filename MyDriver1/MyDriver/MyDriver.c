@@ -174,6 +174,8 @@ VOID Test15();
 VOID Test16();
 VOID Test17();
 VOID Test18();
+VOID Test19();
+VOID Test20();
 
 /*++
 
@@ -296,6 +298,12 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegist
 
 	// 实验函数18————文件的写操作
 	Test18();
+
+	// 实验函数19————文件的读操作
+	Test19();
+
+	// 实验函数20————创建关闭注册表
+	Test20();
 
 	// 设置派遣函数
 	pDriverObject->MajorFunction[IRP_MJ_CREATE] = MyDriverDispatchRoutin;
@@ -2752,4 +2760,284 @@ VOID Test18()
 	ExFreePool(pBuffer);
 
 	KdPrint(("Test18————finishing\n"));
+}
+
+/*++
+
+文件的读操作
+
+	DDK提供了文件读操作的内核函数，其函数声明如下：
+
+NTSTATUS ZwReadFile (
+	IN HANDLE FileHandle,
+	IN HANDLE Event OPTIONAL,
+	IN PIO_APC_BOUTINE ApcPoutine OPTIONAL,
+	IN PVOID ApcContext OPTIONAL,
+	OUT PIO_STATUS_BLOCK IoStatusBlock,
+	IN PVOID Buffer,
+	IN ULONG Length,
+	IN PLAYER_INTEGER ByteOffset OPTIONAL,
+	IN PULONG Key OPTIONAL
+);
+
+	FileHandle: 文件打开的句柄。
+	Event: 很少用到，一般设置为NULL。
+	ApcRoutine: 很少用到，一般设置为NULL。
+	ApcContext: 很少用到，一般设置为NULL。
+	IoStatusBlock: 记录写操作的状态，其中，IoStatusBlock.
+Information记录实际写了多少字节。
+	Buffer: 从这个缓冲区开始从文件里读。
+	Length: 准备写多少字节。
+	ByteOffset: 从文件的多少偏移地址开始写。
+	Key: 很少用到，一般设置为NULL。
+
+	如果是读取整个文件，需要知道文件的大小，该功能可以通过内核
+函数ZwQueryInformationFile来实现。
+
+	代码如下所示：
+
+--*/
+
+VOID Test19()
+{
+	KdPrint(("Test19————beginning\n"));
+
+	OBJECT_ATTRIBUTES objectAttributes;
+	IO_STATUS_BLOCK iostatus;
+	HANDLE hfile;
+	UNICODE_STRING logFileUnicodeString;
+
+	// 初始化UNICODE_STRING字符串
+	RtlInitUnicodeString(
+		&logFileUnicodeString,
+		L"\\??\\C:\\1.log"
+	);
+	// 或者写成"\\Device\\HarddiskVolume1\\1.LOG"
+
+	// 初始化objectAttributes
+	InitializeObjectAttributes(
+		&objectAttributes,
+		&logFileUnicodeString,
+		OBJ_CASE_INSENSITIVE, // 对大小写敏感
+		NULL,
+		NULL
+	);
+
+	// 创建文件
+	NTSTATUS ntStatus = ZwCreateFile(
+		&hfile,
+		GENERIC_READ,
+		&objectAttributes,
+		&iostatus,
+		NULL,
+		FILE_ATTRIBUTE_NORMAL,
+		FILE_SHARE_READ,
+		FILE_OPEN, // 即使存在该文件，也创建
+		FILE_SYNCHRONOUS_IO_NONALERT,
+		NULL,
+		0
+	);
+
+	if (!NT_SUCCESS(ntStatus))
+	{
+		KdPrint(("The file is not exist!\n"));
+		return;
+	}
+
+	FILE_STANDARD_INFORMATION fsi;
+	// 读取文件长度
+	ntStatus = ZwQueryInformationFile(
+		hfile,
+		&iostatus,
+		&fsi,
+		sizeof(FILE_STANDARD_INFORMATION),
+		FileStandardInformation
+	);
+
+	KdPrint(("The program want to read %d bytes\n",
+		fsi.EndOfFile.QuadPart));
+
+	// 为读取的文件分配缓冲区
+	PUCHAR pBuffer = (PUCHAR)ExAllocatePool(
+		PagedPool, (LONG)fsi.EndOfFile.QuadPart
+	);
+
+	// 读取文件
+	ZwReadFile(
+		hfile,
+		NULL,
+		NULL,
+		NULL,
+		&iostatus,
+		pBuffer,
+		(LONG)fsi.EndOfFile.QuadPart,
+		NULL,
+		NULL
+	);
+
+	KdPrint(("The program really read %d bytes\n",
+		iostatus.Information));
+
+	// 关闭文件句柄
+	ZwClose(hfile);
+
+	// 释放缓冲区
+	ExFreePool(pBuffer);
+
+	KdPrint(("Test19————finishing\n"));
+}
+
+/*++
+
+内核模式下的注册表操作
+
+	在驱动程序的开发中，经常会用到对注册表的操作。DDK提供了
+另外一套对注册表操作的相关函数。
+
+	注册表中的概念：
+
+	注册表项: 注册表中的一个项目，类似目录的概念。每个项中
+存储多个二元结构，键名——键值。每个项中，可以有若干个子项。
+	注册表子项: 类似于目录中的子目录。
+	键名: 通过键名可以寻找到相应的键值。
+	键值类别: 每个键值存储的时候有不同的类别，可以是整形，
+字符串等数据。
+	键值: 键名下对应存储的数据。
+
+--*/
+
+/*++
+
+创建关闭注册表
+
+	和文件操作类似，对注册表操作首先要获取一个注册表句柄。对
+注册表的操作都需要根据这个句柄进行操作。可以通过ZwCreateKey
+函数获得打开的注册表句柄。这个函数打开注册表后，并返回一个操
+作句柄。其函数声明如下:
+
+NTSTATUS ZwCreateKey (
+	OUT PHANDLE KeyHandle,
+	IN ACCESS_MASK DesiredAccess,
+	IN POBJECT_ATTRIBUTES ObjectAttriburtes,
+	IN ULONG TitleIndex,
+	IN PUNICODE_STRING Class OPTIONAL,
+	IN ULONG CreateOptions,
+	OUT PULONG Disposition OPTIONAL
+);
+
+	KeyHandle: 获得的注册表句柄。
+	DesiredAccess: 访问权限，一般设置为KEY_ALL_ACCESS。
+	ObjectAttributes: OBJECT_ATTRIBUTES数据结构。
+	TitleIndex: 很少用到，一般设置为0。
+	Class: 很少用到，一般设置为NULL。
+	CreateOptions: 创建时的选项，一般设置为REG_OPTION_NON_VOLATILE。
+	Disposition: 返回是创建成功，还是打开成功。返回值是
+REG_CREATED_NEW_KEY或者是REG_OPENED_EXISTING_KEY。
+	返回值: 返回是否创建成功。
+
+	如果ZwCreateKey指定的项目不存在，则直接创建这个项目，并
+利用Disposition参数返回REG_CREATED_NEW_KEY。如果该项目已经
+存在了，Disposition参数返回REG_OPENED_EXISTING_KEY。代码
+如下所示：
+
+--*/
+
+VOID Test20()
+{
+	KdPrint(("Test20————beginning\n"));
+
+	// 创建或打开某注册表项目
+	UNICODE_STRING RegUnicodeString;
+	HANDLE hRegister;
+
+	// 初始化UNICODE_STRING字符串
+	RtlInitUnicodeString(
+		&RegUnicodeString,
+		L"\\Registry\\Machine\\Software\\Test"
+	);
+
+	OBJECT_ATTRIBUTES objectAttributes;
+	// 初始化objectAttributes
+	InitializeObjectAttributes(
+		&objectAttributes,
+		&RegUnicodeString,
+		OBJ_CASE_INSENSITIVE, // 对大小写敏感
+		NULL,
+		NULL
+	);
+	
+	ULONG ulResult;
+	// 创建或打开注册表项目
+	NTSTATUS ntStatus = ZwCreateKey(
+		&hRegister,
+		KEY_ALL_ACCESS,
+		&objectAttributes,
+		0,
+		NULL,
+		REG_OPTION_NON_VOLATILE,
+		&ulResult
+	);
+
+	if (NT_SUCCESS(ntStatus))
+	{
+		// 判断是被新创建，还是已经被创建
+		if (ulResult == REG_CREATED_NEW_KEY)
+		{
+			KdPrint(("The register item is created\n"));
+		}
+		else if (ulResult == REG_OPENED_EXISTING_KEY)
+		{
+			KdPrint(("The register item has been created, and now is opened\n"));
+		}
+	}
+
+	// 创建或打开某注册表项目的子项
+	UNICODE_STRING subRegUnicodeString;
+	HANDLE hSubRegister;
+
+	// 初始化UNICODE_STRING字符串
+	RtlInitUnicodeString(
+		&subRegUnicodeString,
+		L"SubItem"
+	);
+
+	OBJECT_ATTRIBUTES subObjectAttributes;
+	// 初始化subObjectAttributes
+	InitializeObjectAttributes(
+		&subObjectAttributes,
+		&subRegUnicodeString,
+		OBJ_CASE_INSENSITIVE, // 对大小写敏感
+		hRegister,
+		NULL
+	);
+
+	// 创建或打开注册表项目
+	ntStatus = ZwCreateKey(
+		&hSubRegister,
+		KEY_ALL_ACCESS,
+		&subObjectAttributes,
+		0,
+		NULL,
+		REG_OPTION_NON_VOLATILE,
+		&ulResult
+	);
+
+	if (NT_SUCCESS(ntStatus))
+	{
+		// 判断是被新创建，还是已经被创建
+		if (ulResult == REG_OPENED_EXISTING_KEY)
+		{
+			KdPrint(("The sub register item is created\n"));
+		}
+		else if (ulResult == REG_OPENED_EXISTING_KEY)
+		{
+			KdPrint(("The sub register item has been created, and now is opened\n"));
+		}
+	}
+
+	// 关闭注册表句柄
+	ZwClose(hRegister);
+	ZwClose(hSubRegister);
+
+	KdPrint(("Test20————finishing\n"));
 }
