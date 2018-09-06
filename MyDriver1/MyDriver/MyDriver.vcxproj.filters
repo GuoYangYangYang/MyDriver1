@@ -17,10 +17,84 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
+    <Filter Include="Test Files">
+      <UniqueIdentifier>{43c42760-66ab-4ca8-8bd5-6b71cafd0a1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyDriver.c">
-      <Filter>Driver Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Test20.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test19.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test18.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test17.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test16.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test15.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test14.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test13.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test12.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test11.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test10.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test09.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test08.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test07.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test06.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test05.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test04.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test03.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test02.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test01.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test00.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test99.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

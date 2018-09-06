@@ -149,6 +149,31 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyDriver.c" />
+    <ClCompile Include="Test00.c" />
+    <ClCompile Include="Test01.c" />
+    <ClCompile Include="Test02.c" />
+    <ClCompile Include="Test03.c" />
+    <ClCompile Include="Test04.c" />
+    <ClCompile Include="Test05.c" />
+    <ClCompile Include="Test06.c" />
+    <ClCompile Include="Test07.c" />
+    <ClCompile Include="Test08.c" />
+    <ClCompile Include="Test09.c" />
+    <ClCompile Include="Test10.c" />
+    <ClCompile Include="Test11.c" />
+    <ClCompile Include="Test12.c" />
+    <ClCompile Include="Test13.c" />
+    <ClCompile Include="Test14.c" />
+    <ClCompile Include="Test15.c" />
+    <ClCompile Include="Test16.c" />
+    <ClCompile Include="Test17.c" />
+    <ClCompile Include="Test18.c" />
+    <ClCompile Include="Test19.c" />
+    <ClCompile Include="Test20.c" />
+    <ClCompile Include="Test99.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyDriver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
