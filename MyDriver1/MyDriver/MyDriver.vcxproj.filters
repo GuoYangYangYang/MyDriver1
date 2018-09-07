@@ -91,6 +91,12 @@
     <ClCompile Include="Test99.c">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="Test21.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test22.c">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyDriver.h">

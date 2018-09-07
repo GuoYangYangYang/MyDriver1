@@ -1,6 +1,7 @@
 #pragma once
 #include <ntifs.h> 
 #define BUFFER_SIZE 1024
+#define MY_REG_SOFTWARE_KEY_NAME L"\\Registry\\Machine\\Software\\Test"
 
 // 用户自定义链表结构
 typedef struct _MYDATASTRUCT {
@@ -63,6 +64,8 @@ VOID Test17();     // 实验函数17————文件的查询、修改文件属性
 VOID Test18();     // 实验函数18————文件的写操作
 VOID Test19();     // 实验函数19————文件的读操作
 VOID Test20();     // 实验函数20————创建关闭注册表
+VOID Test21();     // 实验函数21————打开注册表
+
 
 PDRIVER_DISPATCH MyDriverDispatchCreate(); // 派遣函数
 PDRIVER_DISPATCH MyDriverDispatchClose();  // 派遣函数

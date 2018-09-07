@@ -170,6 +170,8 @@
     <ClCompile Include="Test18.c" />
     <ClCompile Include="Test19.c" />
     <ClCompile Include="Test20.c" />
+    <ClCompile Include="Test21.c" />
+    <ClCompile Include="Test22.c" />
     <ClCompile Include="Test99.c" />
   </ItemGroup>
   <ItemGroup>

@@ -83,64 +83,67 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegist
 	DisplayItsProcessName();
 
 	// 实验函数1————申请内存
-	Test01();
+	// Test01();
 
 	// 实验函数2————链表
-	Test02();
+	// Test02();
 
 	// 实验函数3————Lookaside
-	Test03();
+	// Test03();
 
 	// 实验函数4————运行时函数
-	Test04();
+	// Test04();
 
 	// 实验函数5————try-except
-	Test05();
+	// Test05();
 
 	// 实验函数6————try-finally
-	Test06();
+	// Test06();
 
 	// 实验函数7————字符串的初始化
-	Test07();
+	// Test07();
 
 	// 实验函数8————字符串的初始化
-	Test08();
+	// Test08();
 
 	// 实验函数9————字符串的复制
-	Test09();
+	// Test09();
 
 	// 实验函数10————字符串的比较
-	Test10();
+	// Test10();
 
 	// 实验函数11————字符串的大写
-	Test11();
+	// Test11();
 
 	// 实验函数12————字符串与数字的转换
-	Test12();
+	// Test12();
 
 	// 实验函数13————两种字符串之间的转换
-	Test13();
+	// Test13();
 
 	// 实验函数14————文件的创建
-	Test14();
+	// Test14();
 
 	// 实验函数15————文件的打开
-	Test15();
+	// Test15();
 
 	// 实验函数16————文件的打开2
-	Test16();
+	// Test16();
 
 	// 实验函数17————文件的查询、修改文件属性
-	Test17();
+	// Test17();
 
 	// 实验函数18————文件的写操作
-	Test18();
+	// Test18();
 
 	// 实验函数19————文件的读操作
-	Test19();
+	// Test19();
 
 	// 实验函数20————创建关闭注册表
 	Test20();
+
+	// 实验函数21————打开注册表
+	Test21();
 
 	// 设置派遣函数
 	pDriverObject->MajorFunction[IRP_MJ_CREATE] = MyDriverDispatchRoutin;

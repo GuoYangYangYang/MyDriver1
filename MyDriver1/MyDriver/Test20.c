@@ -72,7 +72,7 @@ VOID Test20()
 	// ³õÊ¼»¯UNICODE_STRING×Ö·û´®
 	RtlInitUnicodeString(
 		&RegUnicodeString,
-		L"\\Registry\\Machine\\Software\\Test"
+		MY_REG_SOFTWARE_KEY_NAME
 	);
 
 	OBJECT_ATTRIBUTES objectAttributes;
